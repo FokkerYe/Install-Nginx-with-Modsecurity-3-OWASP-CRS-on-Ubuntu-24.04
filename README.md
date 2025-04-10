@@ -103,12 +103,9 @@ sudo nginx -t
 
 sudo systemctl restart nginx
 ```
-We can test the nginx server with browser on its public ip address.
-Update Rule with CORE RULE SET (CRS)
+ Download OWASP CRS (Core Rule Set)
 
-Now, we need to download core rule set from owasp, owasp crs provide rule to check if the client request has malicious code or not.
-
-We directly download owasp crs to nginx configuration directory.
+Download the OWASP CRS to protect the web application.
 ```
 sudo git clone https://github.com/coreruleset/coreruleset.git /etc/nginx/owasp-crs
 ```
@@ -127,18 +124,16 @@ last, we check nginx configuration,
 ```
 sudo nginx -t
 ```
-and restart nginx server.
 
-sudo service nginx restart
 
-Test Modsecurity + Nginx with browser
-Try to access to your server and add some shell code on it :
+To test if ModSecurity is working, try accessing the server and adding a shell command to the URL, e.g.,:
 ```
 https://ip_address/as.php?s=/bin/bash
 ```
-If everything working as expected, forbidden access will show, with code 403. this mean we have success deploy our nginx server with modsecurity module.
+If ModSecurity is functioning, a 403 Forbidden error will be shown, indicating the request was blocked.
+View ModSecurity Logs:
 
-To view detail about those error, we can see the log file of the modsecurity.
+You can view detailed logs of ModSecurity for blocked requests:
 ```
 sudo tail -f /var/log/modsec_audit.log
 sudo tail -f /var/log/nginx/error.log
