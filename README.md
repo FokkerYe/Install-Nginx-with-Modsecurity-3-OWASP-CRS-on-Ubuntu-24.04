@@ -47,15 +47,16 @@ sudo systemctl status nginx
 We also need to check our nginx version, to match our nginx build manual later on.
 ```
 sudo nginx -v
-nginx version: nginx/1.25.4
+nginx version: nginx/1.26.3
+
 ```
 Download nginx source code
 
 We should download source code that match version on nginx we recently installed.
 ```
-cd /opt && sudo wget https://nginx.org/download/nginx-1.25.4.tar.gz
-sudo tar -xzvf nginx-1.25.4.tar.gz
-cd nginx-1.25.4
+cd /opt && sudo wget https://nginx.org/download/nginx-1.26.3.tar.gz
+sudo tar -xzvf nginx-1.26.3.tar.gz
+cd nginx-1.26.3
 ```
 after we download, extract and change directory to nginx source. we build nginx with module on modsecurity that we successfully installed above.
 ```
@@ -141,3 +142,39 @@ To view detail about those error, we can see the log file of the modsecurity.
 sudo tail -f /var/log/modsec_audit.log
 sudo tail -f /var/log/nginx/error.log
 ```
+
+To block the IP address 103.101.15.218 using ModSecurity, follow these steps:
+Step-by-Step Instructions:
+
+    Edit the ModSecurity Configuration File:
+
+        The ModSecurity configuration file is typically located at /etc/nginx/modsecurity.conf. Open this file in a text editor.
+```
+sudo nano /etc/nginx/modsecurity.conf
+```
+Add the IP Blocking Rule:
+
+    Add the following rule to block the IP 103.101.15.218. Place it anywhere in the file (ideally in a section where you're managing custom rules, like at the end of the file).
+```
+SecRule REMOTE_ADDR "@ipMatch 103.101.15.218" \
+    "id:1001,deny,status:403,msg:'Blocking IP 103.101.15.218',severity:2"
+```
+Explanation:
+
+    SecRule: The ModSecurity rule directive.
+
+    REMOTE_ADDR: Refers to the client's IP address.
+
+    @ipMatch: The operator to match the specified IP.
+
+    103.101.15.218: The IP address you want to block.
+
+    id:1001: A unique rule ID. Ensure this number is not used elsewhere.
+
+    deny: The action to take, which is to deny the request.
+
+    status:403: The HTTP response status code for forbidden access.
+
+    msg:'Blocking IP 103.101.15.218': A custom message that will be logged.
+
+    severity:2: The severity level for the rule.
