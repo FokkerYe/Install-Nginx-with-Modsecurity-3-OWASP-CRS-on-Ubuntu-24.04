@@ -3,12 +3,13 @@ Step 1: Update the System and Install Required Libraries
 ```
 sudo apt update && sudo apt upgrade -y
 ```
-Install libraries  of modsecurity 3.
+Install Required Libraries for ModSecurity 3:
 ```
 sudo apt install libpcrecpp0v5 -y
 sudo apt install gcc make build-essential autoconf automake libtool libcurl4-openssl-dev liblua5.3-dev libfuzzy-dev ssdeep gettext pkg-config libgeoip-dev libyajl-dev doxygen libpcre2-16-0 libpcre2-dev libpcre2-posix3 zlib1g zlib1g-dev -y
 ```
-Install Modsecurity 
+Install ModSecurity 3
+Clone ModSecurity Repository:
 ```
 cd /opt && sudo git clone https://github.com/owasp-modsecurity/ModSecurity.git
 cd ModSecurity
@@ -22,18 +23,16 @@ sudo ./configure
 sudo make
 sudo make install
 ```
-If we success with this installation, we make big move. go on.
-Download Modsecurity-nginx Connector
+Download ModSecurity-Nginx Connector
 
-Next, we download modsecurity nginx connector, we will use this later on.
+Next, download the ModSecurity-Nginx connector to integrate ModSecurity with Nginx.
 ```
 cd /opt && sudo git clone https://github.com/owasp-modsecurity/ModSecurity-nginx.git
 ```
-Install Nginx with latest from Ondrej PPA
+Install Nginx
 
-Ok, we will install nginx from ondrej ppa, we got the latest version of nginx.
-
-First, we need to add repository from ondrej and update our package.
+We'll install the latest version of Nginx from the Ondrej PPA repository.
+Add Repository and Install Nginx:
 ```
 sudo add-apt-repository ppa:ondrej/nginx -y
 sudo apt update
@@ -58,7 +57,9 @@ cd /opt && sudo wget https://nginx.org/download/nginx-1.26.3.tar.gz
 sudo tar -xzvf nginx-1.26.3.tar.gz
 cd nginx-1.26.3
 ```
-after we download, extract and change directory to nginx source. we build nginx with module on modsecurity that we successfully installed above.
+Build Nginx with ModSecurity
+
+Configure and build Nginx with ModSecurity support.
 ```
 sudo ./configure --with-compat --add-dynamic-module=/opt/ModSecurity-nginx
 
