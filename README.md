@@ -251,7 +251,7 @@ You should see a 403 Forbidden response if ModSecurity is blocking correctly.
     All rules must have unique id: fields.
 
     You can categorize rules into separate files in the /etc/nginx/modsecurity/ folder.
-```
+
     Logs are stored in /var/log/modsec_audit.log
 
-```
+
