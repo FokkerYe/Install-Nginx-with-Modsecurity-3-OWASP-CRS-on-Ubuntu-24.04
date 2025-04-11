@@ -1,4 +1,7 @@
 # Nginx-with-Modsecurity-3-OWASP-CRS-on-Ubuntu-24.04-installation
+
+![nginx](nginx.PNG)
+
 Step 1: Update the System and Install Required Libraries
 ```
 sudo apt update && sudo apt upgrade -y
