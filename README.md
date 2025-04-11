@@ -151,9 +151,9 @@ Step-by-Step Instructions:
 ```
 sudo nano /etc/nginx/modsecurity.conf
 ```
-Add the IP Blocking Rule:
+### Add the IP Blocking Rule:
 
-    Add the following rule to block the IP 103.101.15.218. Place it anywhere in the file (ideally in a section where you're managing custom rules, like at the end of the file).
+   #### Add the following rule to block the IP 103.101.15.218. Place it anywhere in the file (ideally in a section where you're managing custom rules, like at the end of the file).
 ```
 SecRule REMOTE_ADDR "@ipMatch 103.101.15.218" \
     "id:1001,deny,status:403,msg:'Blocking IP 103.101.15.218',severity:2"
