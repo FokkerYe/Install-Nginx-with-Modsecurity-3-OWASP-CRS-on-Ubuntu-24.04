@@ -174,3 +174,84 @@ Explanation:
     msg:'Blocking IP 103.101.15.218': A custom message that will be logged.
 
     severity:2: The severity level for the rule.
+
+  ##   custome rule create
+     🛡️ Adding Custom ModSecurity Rules for Nginx on Ubuntu 24.04
+
+This guide outlines the steps to create and enable custom security rules (SQL Injection & XSS protection) using **ModSecurity v3** with **Nginx**.
+
+---
+
+## 📁 Step 1: Create the `modsecurity` Directory
+
+```bash
+sudo mkdir /etc/nginx/modsecurity
+```
+
+✍️ Step 2: Create Custom Rules File
+```
+sudo nano /etc/nginx/modsecurity/custom-rules.conf
+```
+Paste the following rules inside:
+```
+# Block basic SQL Injection
+SecRule ARGS "@rx select.+from|union.+select|insert.+into|drop.+table" \
+    "id:20001,phase:2,deny,status:403,msg:'SQL Injection Detected'"
+
+# Block basic XSS
+SecRule ARGS|REQUEST_HEADERS|XML:/* "@rx <script>|javascript:|onerror=|onload=" \
+    "id:20002,phase:2,deny,status:403,msg:'XSS Attack Detected'"
+```
+Save and exit:
+Ctrl + O, Enter, Ctrl + X
+⚙️ Step 3: Include Custom Rule File in Main Configuration
+
+Edit the main ModSecurity configuration:
+
+```
+sudo nano /etc/nginx/modsecurity.conf
+```
+At the bottom of the file, add the following line:
+```
+Include /etc/nginx/modsecurity/custom-rules.conf
+```
+✅ Alternatively, to include all rules from a folder:
+```
+Include /etc/nginx/modsecurity/*.conf
+```
+🧪 Step 4: Test Nginx Configuration
+```
+sudo nginx -t
+```
+🔁 Step 5: Restart Nginx to Apply Changes
+```
+sudo systemctl restart nginx
+```
+🔍 Step 6: Monitor ModSecurity Logs
+
+To watch real-time logs for blocked requests:
+```
+sudo tail -f /var/log/modsec_audit.log
+```
+✅ Testing the Rules
+
+Try accessing URLs like the following from a browser:
+
+    SQL Injection test
+```
+http://your_server_ip/index.php?id=1 UNION SELECT password FROM users
+```
+XSS test
+```
+    http://your_server_ip/index.php?name=<script>alert(1)</script>
+```
+You should see a 403 Forbidden response if ModSecurity is blocking correctly.
+📚 Notes
+
+    All rules must have unique id: fields.
+
+    You can categorize rules into separate files in the /etc/nginx/modsecurity/ folder.
+```
+    Logs are stored in /var/log/modsec_audit.log
+
+```
