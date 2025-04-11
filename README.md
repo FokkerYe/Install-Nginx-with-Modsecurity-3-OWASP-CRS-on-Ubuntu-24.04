@@ -255,3 +255,66 @@ You should see a 403 Forbidden response if ModSecurity is blocking correctly.
     Logs are stored in /var/log/modsec_audit.log
 
 
+    
+
+# 🔐 ModSecurity Custom Rules for Nginx
+
+This document outlines a set of custom **ModSecurity v3** rules to help protect your web application from common OWASP Top 10 vulnerabilities. These rules are designed to be added to your ModSecurity configuration when integrated with **Nginx**.
+
+---
+
+## ✅ 1. SQL Injection Protection
+
+```apache
+SecRule ARGS "@rx select.+from|union.+select|insert.+into|drop.+table" \
+    "id:1002,phase:2,deny,status:403,msg:'SQL Injection Attempt Detected'"
+```
+
+🔍 Explanation:
+Blocks requests that contain suspicious SQL keywords like SELECT FROM, UNION SELECT, DROP TABLE, etc.
+✅ 2. Cross-Site Scripting (XSS) Protection
+```
+SecRule ARGS|REQUEST_HEADERS|XML:/* "@rx <script>|javascript:|onerror=|onload=" \
+    "id:1003,phase:2,deny,status:403,msg:'XSS Attempt Detected'"
+```
+🔍 Explanation:
+Detects malicious HTML/JavaScript injections such as <script>, onerror=, and onload=, and blocks them.
+✅ 3. Remote Code Execution (RCE) Protection
+```
+SecRule ARGS|REQUEST_HEADERS "@rx /bin/bash|/usr/bin/perl|/usr/bin/python" \
+    "id:1004,phase:2,deny,status:403,msg:'Remote Code Execution Attempt'"
+```
+🔍 Explanation:
+Blocks any input attempting to reference local system binaries commonly used in RCE exploits.
+✅ 4. Local File Inclusion (LFI) Protection
+```
+SecRule ARGS "@rx (\.\./|\.\.\\)" \
+    "id:1005,phase:2,deny,status:403,msg:'LFI Attempt Detected'"
+```
+🔍 Explanation:
+Prevents directory traversal attacks like ../../etc/passwd used to access system files.
+✅ 5. Command Injection Protection
+```
+SecRule ARGS "@rx (;|\||`|\$\(.*\))" \
+    "id:1006,phase:2,deny,status:403,msg:'Command Injection Attempt Detected'"
+```
+🔍 Explanation:
+Blocks command injection attempts using shell operators such as |, ;, backticks, or $() expressions.
+✅ 6. Bad Bot User-Agent Blocking
+```
+SecRule REQUEST_HEADERS:User-Agent "@pmFromFile bots-user-agents.txt" \
+    "id:1007,phase:1,deny,status:403,msg:'Bad Bot Detected'"
+```
+🔍 Explanation:
+Blocks web crawlers and bots based on the User-Agent header. Requires a file (bots-user-agents.txt) with bot strings.
+```
+📝 Sample bots-user-agents.txt:
+
+AhrefsBot
+MJ12bot
+SemrushBot
+DotBot
+
+```
+
+
