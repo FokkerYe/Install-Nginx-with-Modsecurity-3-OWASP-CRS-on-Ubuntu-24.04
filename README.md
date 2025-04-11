@@ -316,5 +316,11 @@ SemrushBot
 DotBot
 
 ```
+## only one ip allow rule
+```
+SecRule REMOTE_ADDR "!@ipMatch 103.101.19.229" \
+    "id:1013,phase:1,deny,status:403,msg:'Only Allowed IPs can access'"
+
+```
 
 
